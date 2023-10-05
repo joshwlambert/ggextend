@@ -4,7 +4,7 @@
 \alias{sim_data}
 \title{Simulate a time series of data under an arbitrary simple generating process}
 \usage{
-sim_data(t, b, d)
+sim_data(t, b, d, t2 = NA, b2 = NA, d2 = NA)
 }
 \arguments{
 \item{t}{Total time of the simulation.}
@@ -12,6 +12,14 @@ sim_data(t, b, d)
 \item{b}{Birth rate.}
 
 \item{d}{Death rate.}
+
+\item{t2}{Time window of rate regime 2. It can either be a single `numeric`,
+which switches to rate regime 2 and does not return to rate regime 1; or a
+vector of two `numerics` for when to enter and leave rate regime 2.}
+
+\item{b2}{Birth rate for rate regime 2.}
+
+\item{d2}{Death rate for rate regime 2.}
 }
 \value{
 <data.frame> with two numeric columns
