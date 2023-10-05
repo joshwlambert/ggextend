@@ -1,0 +1,36 @@
+---
+title: "Writing Custom ggplot2 geoms"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Writing Custom ggplot2 geoms}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette contains information on how to make a custom `geom` for a ggplot2 object.
+
+```{r setup}
+library(ggextend)
+library(ggplot2)
+```
+
+```{r, sim-data}
+dat <- sim_data(t = 100, b = 10, d = 5)
+```
+
+With the simple stochastic time-series a ggplot can be produced:
+
+```{r, plot-data}
+ggplot2::ggplot(data = dat) + 
+  ggplot2::geom_point(mapping = ggplot2::aes(x = time, y = system))
+```
+
+
+
