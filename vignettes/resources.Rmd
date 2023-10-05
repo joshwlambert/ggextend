@@ -1,0 +1,32 @@
+---
+title: "resources"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{resources}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette contains a selection of resources that are useful for understanding how the {ggplot2} package works and geoms.
+
+## resources
+
+***Books***
+
+- https://ggplot2-book.org/
+
+***Book chapters***
+
+- https://bookdown.org/rdpeng/RProgDA/building-new-graphical-elements.html
+
+***Papers/Articles***
+
+- https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
+
