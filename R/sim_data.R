@@ -21,6 +21,7 @@ sim_data <- function(t, b, d, t2 = NA, b2 = NA, d2 = NA) {
       is.na(d2) || is.numeric(d2)
   )
 
+  r <- 1
   total_t <- t
   t <- 0
   p <- 100
@@ -38,15 +39,20 @@ sim_data <- function(t, b, d, t2 = NA, b2 = NA, d2 = NA) {
 
   for (i in seq_len(total_t)) {
 
-    if (i > t2[1] && i < t2[2]) {
+    if (i >= t2[1] && i <= t2[2]) {
       diff <- sample(c(1, -1), 1, prob = c(rel_b2, rel_d2))
+      r <- c(r, 2)
     } else {
       diff <- sample(c(1, -1), 1, prob = c(rel_b, rel_d))
+      r <- c(r, 1)
     }
     p <- c(p, p[length(p)] + diff)
     t <- c(t, i)
   }
 
   # return data.frame
-  structure(data.frame(time = t, system = p), class = c("bdts", "data.frame"))
+  structure(
+    data.frame(time = t, system = p, rate = r),
+    class = c("bdts", "data.frame")
+  )
 }
