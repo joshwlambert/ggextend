@@ -32,5 +32,123 @@ ggplot2::ggplot(data = dat) +
   ggplot2::geom_point(mapping = ggplot2::aes(x = time, y = system))
 ```
 
+We can use a plotting method to automate create the plot. This works as the 
+output of `sim_data()` is tagged with the `<bdts>` S3 class and the plotting
+method is written to expect this class (`plot.bdts()`).
 
+```{r, plot-method}
+plot(dat)
+```
+
+We can simulate with 2 rate regimes. The first rate regime has birth and death 
+of 1 (i.e. equal probability at each time step of a birth or a death). The second
+rate regime has a birth rate of 10 thus the probability of a birth event will be
+10 times more likely than a death event.
+
+```{r, sim-data-2-rate}
+dat <- sim_data(t = 100, b = 1, d = 1, t2 = 50, b2 = 10)
+```
+
+```{r, plot-2-rate}
+plot(dat)
+```
+
+To visualise where the rate regime changes we can customise our plots with 
+shading and annotations to show where the rate regime shift happens.
+
+```{r, plot-2-rate-shade}
+plot(dat) + 
+  ggplot2::annotate(
+    "rect", 
+    xmin = min(which(dat$rate == 2)), 
+    xmax = max(which(dat$rate == 2)), 
+    ymin = min(dat$system), 
+    ymax = max(dat$system), 
+    alpha = 0.2, 
+    fill = "purple"
+  ) + ggplot2::annotate(
+    geom = "text", 
+    label = "Rate Regime 2",
+    x = mean(which(dat$rate == 2)), 
+    y = mean(dat$system), 
+  )
+```
+
+This chunk of custom annotation can also be automated by creating a custom ggplot2
+`geom`.
+
+## Creating a custom `geom`
+
+It states in the `Geom` documentation (`?ggplot2::Geom`) and [aaa-.R file in the ggplot2 package](https://github.com/tidyverse/ggplot2/blob/6dd9bb66116ea5531c5b649c02f7390387028087/R/aaa-.R) that to write a custom `geom` `ggplot2::Geom` will need to be extended.
+
+Each `geom` is usuall structured to have one function that is called in composed a plot, e.g., `geom_rect()`, and one function that constructs a `<ggproto>` object, e.g. `GeomRect`.
+
+`{ggplot2}` uses the `{grid}` package for create plots. An introduction to the `{grid}` package can be found by running `vignette("grid", package = "grid")` in R.
+
+Example of `Geom` function:
+
+```{r}
+GeomRateShift <- ggplot2::ggproto(
+  "Geomrateshift", ggplot2::Geom,
+  default_aes = ggplot2::aes(colour = NA, fill = "purple", linewidth = 0.5, linetype = 1,
+                    alpha = NA),
+  required_aes = c("xmin", "xmax", "ymin", "ymax"),
+  draw_key = ggplot2::draw_key_polygon,
+  draw_panel = function(self, data, panel_params, coord, lineend = "butt", linejoin = "mitre") {
+    coords <- coord$transform(data, panel_params)
+    coords$alpha <- 0.5
+    grob <- grid::rectGrob(
+      coords$xmin, coords$ymax,
+      width = coords$xmax - coords$xmin,
+      height = coords$ymax - coords$ymin,
+      default.units = "native",
+      just = c("left", "top"),
+      gp = grid::gpar(
+        col = coords$colour,
+        fill = ggplot2::alpha(coords$fill, coords$alpha),
+        lwd = coords$linewidth * .pt,
+        lty = coords$linetype,
+        linejoin = linejoin,
+        lineend = lineend
+      )
+    )
+    grob$name <- grid::grobName(
+      grob = grob,
+      prefix = "geom_rect"
+    )
+    grob
+  }
+)
+```
+
+
+After we've written the new `Geom` function, we can write a `geom_*()` function to
+call it when building a plot with `{ggplot2}`:
+
+```{r}
+geom_rateshift <- function(mapping = NULL, data = NULL,
+                           stat = "identity", position = "identity",
+                           ...,
+                           linejoin = "mitre",
+                           na.rm = FALSE,
+                           show.legend = NA,
+                           inherit.aes = TRUE) {
+  ggplot2::layer(
+    geom = GeomRateShift,
+    data = data,
+    mapping = mapping,
+    stat = stat,
+    position = position,
+    show.legend = show.legend,
+    inherit.aes = inherit.aes,
+    params = list(
+      linejoin = linejoin,
+      na.rm = na.rm,
+      ...
+    )
+  )
+}
+```
+
+When calling `ggplot2::layer()` in this function the specified `Geom` constructor is now our new custom `GeomRateShift`.
 
