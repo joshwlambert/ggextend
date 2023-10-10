@@ -21,12 +21,14 @@ This vignette contains a selection of resources that are useful for understandin
 ***Books***
 
 - https://ggplot2-book.org/
+- RGraphics by Paul Murrell (some chapters are available for free here: https://www.stat.auckland.ac.nz/~paul/RGraphics/rgraphics.html)
 
 ***Book chapters***
 
 - https://bookdown.org/rdpeng/RProgDA/building-new-graphical-elements.html
+- https://bookdown.org/rdpeng/RProgDA/the-grid-package.html
 
 ***Papers/Articles***
 
 - https://cran.r-project.org/web/packages/ggplot2/vignettes/extending-ggplot2.html
-
+- https://ggplot2.tidyverse.org/articles/ggplot2-in-packages.html
